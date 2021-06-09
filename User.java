@@ -3,7 +3,10 @@ public class User extends Object
 {
 	public String name;
 	private String pwd;
-	public int headpic;
+	public String headpic;
+	public String gender;
+	public String age;
+	public String email;
 	public String getPwd()
 	{
 		return pwd;
