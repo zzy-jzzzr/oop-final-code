@@ -22,6 +22,11 @@ public class SeverWindow extends JFrame implements ActionListener
 		{
 			this.dispose();
 		}
+		else if(source.equals(send))
+		{
+			this.systemMessage = text_notice.getText();
+			text_notice.setText("");
+		}
 		
 	}
 	/**
@@ -31,6 +36,7 @@ public class SeverWindow extends JFrame implements ActionListener
 	JTabbedPane options = new JTabbedPane(JTabbedPane.TOP);
 	//服务端信息属性
 	Font font_char = new Font("宋体", Font.PLAIN, 15);
+	Font font_uspage = new Font("宋体", Font.PLAIN, 15);
 	//
 	JPanel panel_server = new JPanel();
 	JPanel panel_sInfo = new JPanel(new GridLayout(2, 6));
@@ -51,11 +57,27 @@ public class SeverWindow extends JFrame implements ActionListener
 	//
 	JButton quit_serve = new JButton("退出服务器");
 	
-	//
+	//用户信息管理
+	JPanel panel_user = new JPanel();
 	
+	public JLabel label_usList = new JLabel("在线用户列表:");
+	public JLabel label_message = new JLabel("消息记录:");
+	public JLabel label_notice = new JLabel("通知:");
+	
+	public JList userList = new JList();
+	public JTextArea text_message = new JTextArea(20, 20);
+	public JTextArea text_notice = new JTextArea(20, 16);
+	
+	JButton send = new JButton("发 送");
+	JButton dele;
+	
+	JScrollPane ul = new JScrollPane();
+	//record notice
+	public String systemMessage ="";
 	//构造方法
 	public SeverWindow()
 	{
+		super("国服服务器");
 		JFrame window = new JFrame("服务器管理");
 		this.setSize(750, 400);
 		Dimension d = window.getSize();
@@ -150,8 +172,75 @@ public class SeverWindow extends JFrame implements ActionListener
 		panel_server.add(panel_sInfo);
 		panel_server.add(quit_serve);
 		
+		//set user-panel
+		panel_user.setLayout(null);
+		panel_user.setBackground(new Color(176, 196, 222));
+		panel_user.setFont(font_uspage);
+		
+		//set user-panel components
+		label_usList.setForeground(Color.BLACK);
+		label_usList.setFont(font_uspage);
+		
+		userList.setFont(font_uspage);
+		userList.setVisibleRowCount(20);
+		userList.setFixedCellWidth(180);
+		userList.setFixedCellHeight(20);//每个元素的高度
+		userList.setBackground(new Color(255,239,219));
+		userList.setListData(new String[] { "" });
+		
+		    //add ScrollBar
+		ul.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);//automatic display
+		ul.setBackground(new Color(176, 196, 222));
+		ul.setFont(font_uspage);
+		ul.getViewport().setView(userList);//设置视图
+		ul.setViewportView(userList);
+		
+		label_message.setForeground(Color.BLACK);
+		label_message.setFont(font_uspage);
+		
+		text_message.setFont(font_uspage);
+		text_message.setLineWrap(true); 
+		text_message.setBackground(new Color(255,239,219));
+		
+		label_notice.setForeground(Color.BLACK);
+		label_notice.setFont(font_uspage);
+		
+		text_notice.setFont(font_uspage);
+		text_notice.setLineWrap(true); 
+		text_notice.setBackground(new Color(255,239,219));
+		
+		send.setFont(new Font("宋体", Font.PLAIN, 14));
+		//send.setBounds(320, 225, 110, 60);
+		send.setEnabled(true);
+		send.setContentAreaFilled(false);
+		send.setOpaque(true); //foreground设置透明
+		send.setBorderPainted(false); 
+		send.setBackground(Color.PINK);
+		send.setToolTipText("点击发送通知");
+		send.setMnemonic('S');
+		send.addActionListener(this);
+		
+		label_usList.setBounds(20, 10, 200, 50);
+		userList.setBounds(20, 60, 200, 250);
+		label_message.setBounds(260, 10, 200, 50);
+		text_message.setBounds(260, 60, 200, 250);
+		label_notice.setBounds(500, 10, 200, 50);
+		text_notice.setBounds(500, 60, 200, 200);
+		send.setBounds(560, 270, 80, 40);
+		
+		panel_user.add(label_usList);
+		panel_user.add(userList);
+		panel_user.add(ul);
+		panel_user.add(label_message);
+		panel_user.add(text_message);
+		panel_user.add(label_notice);
+		panel_user.add(text_notice);
+		panel_user.add(send);
+		
 		//add to top panel
 		options.add("服务器管理", panel_server);
+		options.add("资源管理", panel_user);
+		options.setFont(font_uspage);
 		options.setForeground(Color.BLACK);
 		options.setBackground(new Color(255,239,219));
 		options.setOpaque(true); //foreground设置透明
