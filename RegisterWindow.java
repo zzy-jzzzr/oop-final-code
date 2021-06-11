@@ -7,13 +7,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -46,8 +48,14 @@ public class RegisterWindow extends JFrame  implements ActionListener
 			try
 			{
 				reg();
-			} catch (IOException e1)
+			} 
+			catch (IOException e1)
 			{
+				e1.printStackTrace();
+			} 
+			catch (ClassNotFoundException e1)
+			{
+				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 		}
@@ -164,7 +172,7 @@ public class RegisterWindow extends JFrame  implements ActionListener
 		
 		
 		headBox.setAutoscrolls(true);
-		headBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3"}));
+		headBox.setModel(new DefaultComboBoxModel(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"}));
 		headBox.addItemListener(new ItemListener() 
 		{
 			public void itemStateChanged(ItemEvent ie)
@@ -234,7 +242,7 @@ public class RegisterWindow extends JFrame  implements ActionListener
 		
 	}
 	
-	public void reg() throws IOException
+	public void reg() throws IOException, ClassNotFoundException
 	{
 		User user = new User();
 		user.name = text_name.getText();
@@ -280,16 +288,33 @@ public class RegisterWindow extends JFrame  implements ActionListener
 				}
 				else
 				{
-					UserList.user_list.add(user);
+					user.isOnReg = true;
+					user.isOnLogin = false;
+					user.isOnQuit = false;
 					//在客户端建立负责连接到服务器的套接字对象
-					Socket user_socket = new Socket(server_IP, 1001);
+					@SuppressWarnings("resource")
+					Socket user_socket = new Socket(server_IP, 1921);
 					//在客户端建立向服务端的输出流
 					ObjectOutputStream user_out_stream = new ObjectOutputStream(user_socket.getOutputStream());
 					//向服务端写用户信息
-					user_out_stream.writeObject(user);
+					user_out_stream.writeObject((User) user);
+					
+					//
+					BufferedReader read =  new BufferedReader(new InputStreamReader(user_socket.getInputStream()));
+					String isSuccess = read.readLine();
+					JOptionPane.showMessageDialog(null,isSuccess);
+					if(isSuccess.equals("注册成功"))
+					{
+						text_age.setText("");
+						text_email.setText("");
+						text_name.setText("");
+						pwdfield_pwd.setText("");
+						pwdfield_checkpwd.setText("");
+					}
+					
 					//关闭流
 					user_out_stream.close();
-					user_socket.close();
+					read.close();
 				}
 			}
 		}
